@@ -92,6 +92,13 @@ hist(
   ylim = c(0, 0.05)
 )
 
+#ecdf
+
+plot(ecdf(covid_data_asia$partly_vacc), col="red", 
+     main="Empirical cum. distribution function of Asia",
+     xlab="partly vaccinated people (in %)", xlim=c(0,100))
+
+#b.
 # scatterplot
 par(mfrow=c(1, 2))
 plot(
@@ -138,5 +145,3 @@ cov(bivariate_hdi_vacc_noNA)
 cor(bivariate_hdi_vacc_noNA, method = "spearman")
 
 #ecdf
-
-#b.
