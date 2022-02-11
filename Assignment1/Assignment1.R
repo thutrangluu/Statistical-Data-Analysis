@@ -69,8 +69,6 @@ hist(covid_data_asia$partly_vacc,
      main="Histogram for Asia", xlab="partly vaccinated people (in %)",
      prob=T,xlim=c(0,100), ylim=c(0,0.05))
 
-
-
 #ecdf
 
 plot(ecdf(covid_data_asia$partly_vacc), col="red", 
