@@ -69,6 +69,15 @@ hist(covid_data_asia$partly_vacc,
      main="Histogram for Asia", xlab="partly vaccinated people (in %)",
      prob=T,xlim=c(0,100), ylim=c(0,0.05))
 
+
+
+#ecdf
+
+plot(ecdf(covid_data_asia$partly_vacc), col="red", 
+     main="Empirical cum. distribution function of Asia",
+     xlab="partly vaccinated people (in %)", xlim=c(0,100))
+
+#b.
 # scatterplot
 plot(covid_data_asia$partly_vacc, 
      covid_data_asia$gdp_per_capita, 
@@ -79,7 +88,3 @@ plot(covid_data_asia$partly_vacc,
      covid_data_asia$human_development_index, 
      xlab="Partly vaccinated people (Percent)", 
      ylab="Human development index")
-
-#ecdf
-
-#b.
