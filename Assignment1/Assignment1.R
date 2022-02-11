@@ -29,6 +29,7 @@ bin <- function(n, size, prob) {
   hist = hist(
     x,
     breaks = 0:max((7 * size * prob), max(x) + 1) - 0.001,
+    main = paste("Histogram for X~Bin(", m ,",", p ,")"),
     prob = T,
     xlim = c(min(x), max(x))
   )
