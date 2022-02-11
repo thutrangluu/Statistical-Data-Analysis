@@ -10,7 +10,7 @@ lognorm <- function(n, mu, sigma) {
   # print(quants)
   # print(loc)
   # print(spread)
-  stud_no = c(2695303, 0)
+  stud_no = c(2695303, 2665825)
   
   mylist = list(quants, loc, spread, stud_no)
   save(mylist, file = "G:/My Drive/Programming R/Statistical-Data-Analysis/Assignment1/myfile1_46.RData")
