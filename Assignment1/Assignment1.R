@@ -4,44 +4,71 @@ lognorm <- function(n, mu, sigma) {
   set.seed(20220211+46)
   randomSample = rlnorm(n, meanlog = mu, sdlog = sigma)
   
-  quants = quantile(randomSample)
+  quants = quantile(randomSample, probs = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95))
   loc = mean(randomSample)
   spread = sd(randomSample)
+  # print(quants)
+  # print(loc)
+  # print(spread)
   stud_no = c(2695303,0)
   
   mylist = list(quants, loc, spread, stud_no)
-  save(mylist, file ="G:/My Drive/Programming R/myfile1_46.RData")
+  save(mylist, file ="G:/My Drive/Programming R/Statistical-Data-Analysis/Assignment1/myfile1_46.RData")
 }
 
 lognorm(n=100,mu=1,sigma=1)
 
 #Exercise 1.5
 #a.
-bin = function(n, size, prob) {
+bin <- function(n, size, prob) {
   m = size
   p = prob
   x = rbinom(n, m, p)
-  pdfPoi = dpois(x, lambda=m*p)
+  pdfPoi = dpois(0:n, lambda=m*p)
   
-  hist = hist(x, prob=T, ylim=c(0,0.20))
-
-  # break??
+  hist = hist(x, breaks=0:max((7*size*prob), max(x)+1)-0.001, prob=T, 
+              xlim = c(min(x), max(x)))
   
-  lines(dpois(x, lambda=m*p),
-        ylim=c(0,0.20),
+  lines(pdfPoi, xlim = c(min(x), max(x)),
         type = "s", col = "red",
         xlab = "x", ylab = "Density")
 }
 #b.
 bin (n=100, size = 1000, prob = 0.01)
-bin (n=200, size = 1000, prob = 0.01)
-bin (n=500, size = 1000, prob = 0.01)
-bin (n=800, size = 1000, prob = 0.01)
+bin (n=200, size = 2000, prob = 0.01)
+bin (n=500, size = 5000, prob = 0.01)
+bin (n=800, size = 8000, prob = 0.01)
 
 #Exercise 1.6
-covid_data_select <- read.csv(file = "C:/Users/PC/Downloads/owid_covid_data_selection.csv", header=TRUE)
+covid_data_select <- read.csv(file = "owid_covid_data_selection.csv", header=TRUE)
 head(covid_data_select)
-covid_data_Asia 
+covid_data_asia <- subset(covid_data_select, covid_data_select$continent == "Asia")
+head(covid_data_asia)
 
+#a.
+#numerical
 
+mean(covid_data_asia$partly_vacc,na.rm = T)
+sd(covid_data_asia$partly_vacc, na.rm = T)
+var(covid_data_asia$partly_vacc, na.rm = T)
+quants = quantile(covid_data_asia$partly_vacc, na.rm = T, probs = c(0.25, 0.5, 0.75))
+range = c(min(covid_data_asia$partly_vacc, na.rm = T),
+           max(covid_data_asia$partly_vacc, na.rm = T))
 
+summary(covid_data_asia$partly_vacc)
+
+boxplot(covid_data_asia$partly_vacc,
+        main="Boxplot of partly vaccinated people (in %)",
+        xlab = "Asia", col="blue")
+
+#graphical
+
+#histogram
+
+hist(covid_data_asia$partly_vacc,  
+     main="Histogram for Asia", xlab="partly vaccinated people (in %)",
+     prob=T,xlim=c(0,100), ylim=c(0,0.05))
+
+#ecdf
+
+#b.
