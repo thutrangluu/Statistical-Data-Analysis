@@ -3,23 +3,18 @@
 lognorm <- function(n, mu, sigma) {
   set.seed(20220211 + 46)
   randomSample = rlnorm(n, meanlog = mu, sdlog = sigma)
-  
   quants = quantile(randomSample, probs = c(0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95))
   loc = mean(randomSample)
   spread = sd(randomSample)
-  # print(quants)
-  # print(loc)
-  # print(spread)
   stud_no = c(2695303, 2665825)
-  
   mylist = list(quants, loc, spread, stud_no)
-  save(mylist, file = "G:/My Drive/Programming R/Statistical-Data-Analysis/Assignment1/myfile1_46.RData")
+  save(mylist, file = "Assignment1/myfile1_46.RData")
 }
 
 lognorm(n = 100, mu = 1, sigma = 1)
 
-#Exercise 1.5
-#a.
+# Exercise 1.5
+# 1.5a
 bin <- function(n, size, prob) {
   m = size
   p = prob
@@ -44,7 +39,7 @@ bin <- function(n, size, prob) {
   legend("topright",legend=c("Binomial", "Poisson"), 
           fill=c("grey", "red"))
 }
-#b.
+# 1.5b
 lambda = 10
 bin (n = 100, size = 1000, prob = lambda/1000)
 bin (n = 200, size = 2000, prob = lambda/2000)
@@ -52,6 +47,7 @@ bin (n = 500, size = 5000, prob = lambda/5000)
 bin (n = 800, size = 8000, prob = lambda/8000)
 
 #Exercise 1.6
+# Read data
 covid_data_select <-
   read.csv(file = "owid_covid_data_selection.csv", header = TRUE)
 head(covid_data_select)
@@ -59,9 +55,7 @@ covid_data_asia <-
   subset(covid_data_select, covid_data_select$continent == "Asia")
 head(covid_data_asia)
 
-#a.
-#numerical
-
+# 1.6a
 mean(covid_data_asia$partly_vacc, na.rm = T)
 sd(covid_data_asia$partly_vacc, na.rm = T)
 var(covid_data_asia$partly_vacc, na.rm = T)
@@ -77,6 +71,9 @@ IQR
 
 summary(covid_data_asia$partly_vacc)
 
+par(mfrow=c(1, 3))
+
+# Box plot
 boxplot(
   covid_data_asia$partly_vacc,
   main = "Boxplot of partly vaccinated people (in %)",
@@ -84,64 +81,33 @@ boxplot(
   col = "blue"
 )
 
-#graphical
-
-#histogram
-
+# Histogram
 hist(
   covid_data_asia$partly_vacc,
   main = "Histogram for Asia",
   xlab = "partly vaccinated people (in %)",
   prob = T,
   xlim = c(0, 100),
-  ylim = c(0, 0.03)
+  ylim = c(0, 0.03),
+  breaks = 10
 )
 
-#ecdf
-
+# Empirical cumulative distribution function
 plot(ecdf(covid_data_asia$partly_vacc), col="red", 
      main="Empirical cum. distribution function of Asia",
      xlab="partly vaccinated people (in %)", xlim=c(0,100))
 
-#b.
-# scatterplot
-par(mfrow=c(1, 2))
-plot(
-  covid_data_asia$partly_vacc,
-  covid_data_asia$gdp_per_capita,
-  main = "Scatter plot partly vaccinated % vs. GDP/capita in Asia",
-  xlab = "Partly vaccinated people (Percent)",
-  ylab = "GDP per capita (Dollar)"
-)
-par(new=F)
-plot(
-  covid_data_asia$partly_vacc,
-  log10(covid_data_asia$gdp_per_capita),
-  main = "Scatter plot partly vaccinated % vs. log GDP/capita in Asia",
-  xlab = "Partly vaccinated people (Percent)",
-  ylab = "Log-normed GDP per capita (Dollar)"
-)
-
+# 1.6b
+# Scatter plot
 plot(
   covid_data_asia$partly_vacc,
   covid_data_asia$human_development_index,
   main = "Scatter plot partly vaccinated % vs. HDI in Asia",
-  xlab = "Partly vaccinated people (Percent)",
+  xlab = "% of partly vaccinated people",
   ylab = "Human development index"
 )
 
-# gpd_per_capita vs. partly_vacc
-bivariate_gpd_vacc <-
-  cbind(covid_data_asia$partly_vacc, covid_data_asia$gdp_per_capita)
-bivariate_gpd_vacc_noNA <-
-  bivariate_gpd_vacc[-which(is.na(covid_data_asia$gdp_per_capita) |
-                              is.na(covid_data_asia$partly_vacc)),]
-
-cov(bivariate_gpd_vacc_noNA)
-
-cor(bivariate_gpd_vacc_noNA, method = "spearman")
-
-# human_development_index vs. partly_vacc
+# Covariance matrix and correlation coefficient
 bivariate_hdi_vacc <-
   cbind(covid_data_asia$partly_vacc, covid_data_asia$human_development_index)
 bivariate_hdi_vacc_noNA <-
