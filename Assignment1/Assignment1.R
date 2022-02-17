@@ -19,9 +19,8 @@ bin <- function(n, size, prob) {
   m = size
   p = prob
   x = rbinom(n, m, p)
-  pdfPoi = dpois(0:n, lambda = m * p)
   
-  hist(
+  h = hist(
     x,
     breaks=0:(max(x)+1)-0.001,
     main = paste("Histogram for X~Bin(", m ,",", p ,") vs. Poisson(", m*p, ")"),
@@ -29,8 +28,12 @@ bin <- function(n, size, prob) {
     xlim = c(0,max(x)+3)
   )
   
+  #h <- hist()
+  
+  u = ((min(h$breaks)-1+0.001):(max(h$breaks)+0.001))
+  
   lines(
-    pdfPoi,
+    dpois(0:n, lambda = m * p),
     type = "s",
     col = "red",
     xlab = "x",
@@ -51,6 +54,7 @@ bin (n = 800, size = 8000, prob = lambda/8000)
 covid_data_select <-
   read.csv(file = "owid_covid_data_selection.csv", header = TRUE)
 head(covid_data_select)
+attach(covid_data_select)
 covid_data_asia <-
   subset(covid_data_select, covid_data_select$continent == "Asia")
 head(covid_data_asia)
