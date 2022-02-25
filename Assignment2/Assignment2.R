@@ -232,3 +232,5 @@ mylist <- list(KS_score, KS_pvalue, KS_reject,
 save(mylist, file="Assignment2/myfile2_46.RData")
 
 #Exercise 2.4
+
+
