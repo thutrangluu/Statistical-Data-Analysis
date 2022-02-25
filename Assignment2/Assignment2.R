@@ -232,5 +232,63 @@ mylist <- list(KS_score, KS_pvalue, KS_reject,
 save(mylist, file="Assignment2/myfile2_46.RData")
 
 #Exercise 2.4
+body_data <- scan("body.dat.txt")
+body_data <- matrix(body_data, ncol = 25, byrow = TRUE)
+body_data <- data.frame(body_data)
 
+colnames(body_data) <- c("Biacromial diameter",
+                         "Biiliac diameter",
+                         "Bitrochanteric diameter",
+                         "Chest depth between spine and sternum at nipple level",
+                         "Chest diameter at nipple level",
+                         "Elbow diameter",
+                         "Wrist diameter",
+                         "Knee diameter",
+                         "Ankle diameter",
+                         "Shoulder girth",
+                         "Chest girth",
+                         "Waist girth",
+                         "Navel girth",
+                         "Hip girth",
+                         "Thigh girth",
+                         "Bicep girth",
+                         "Forearm girth",
+                         "Knee girth",
+                         "Calf girth",
+                         "Ankle girth",
+                         "Wrist girth",
+                         "Age",
+                         "Weight",
+                         "Height",
+                         "Gender")
 
+body_data_male <- subset(body_data, body_data$Gender == 1)
+
+BMI <- body_data_male$Weight / (body_data_male$Height/100)^2
+
+hist(
+  BMI, 
+  breaks = seq(min(BMI) - 5, max(BMI) + 5, by = 2),
+  main = paste("Histogram for BMI in male"),
+  prob = F
+)
+
+boxplot(
+  BMI,
+  main = "Boxplot BMI in male",
+  xlab = "BMI"
+)
+
+hist(
+  body_data_male$`Ankle girth`, 
+  breaks = seq(min(BMI) - 5, max(BMI) + 5, by = 2),
+  main = paste("Histogram for ankle grith in male"),
+  prob = F,
+  xlab = "Ankle grith"
+)
+
+boxplot(
+  body_data_male$`Ankle girth`,
+  main = "Boxplot Ankle grith in male",
+  xlab = "Ankle grith"
+)
