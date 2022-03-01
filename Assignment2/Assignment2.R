@@ -1,15 +1,8 @@
 source("Functions_Ch3.txt")
 source("sample2022.txt")
-#2.1
-set.seed(12345)
-par(mfrow = c(1, 2), pty = "s")
 
-n = 10
-x <- rnorm(n, 0, 1)
-
-qqnorm(x, main = paste("Normal QQ Plot, n=", n))
-qqline(x, col = 2, lwd = 3)
-
+p = seq(0,1, 0.1)
+par(pty="s", mfrow=c(1,3))
 
 
 #Exercise 2.2
@@ -33,27 +26,27 @@ par(pty = "s", mfrow = c(1, 3))
 plot(norm,
      exp,
      type = "l",
-     main = paste("True QQ Plot
-      N(0,1) vs. Exp(3)"))
+     main = paste("True QQ Plot N(0,1) vs. Exp(3)"))
 plot(
   norm2,
   t4,
   type = "l",
   col = "red",
-  main = paste("True QQ Plot
-      N(-1,9) vs. t_4")
+  main = paste("True QQ Plot N(-1,9) vs. t_4")
 )
 plot(
   t6,
   chi2,
   type = "l",
   col = "blue",
-  main = paste("True QQ Plot
-        t_6 vs. Chi-squared")
+  main = paste("True QQ Plot t_6 vs. Chi-squared")
 )
 
 #2.2b
 par(pty = "s", mfrow = c(1, 3))
+
+hist(sample2022$sample2022a,
+     prob = T)
 
 ## fit to exp(1)
 qqnorm(sample2022$sample2022a)
@@ -64,14 +57,6 @@ qqline(
   col = "red",
 )
 
-## fit to exp(0.5) shifted by -1 
-qqnorm(sample2022$sample2022a)
-qqline(
-  sample2022$sample2022a,
-  distribution = function(p)
-    qexp(p, rate = 0.5) - 1,
-  col = "red"
-)
 
 ## fit to exp(0.75) shifted by -1 
 qqnorm(sample2022$sample2022a)
@@ -82,22 +67,20 @@ qqline(
   col = "red"
 )
 
-## qq chisq
-qqchisq(sample2022$sample2022a, df = 4)
-qqline(
-  sample2022$sample2022a,
-  distribution = function(p)
-    qchisq(p, df = 4),
-  col = "red"
+## fit to lognorm 
+qqlnorm(sample2022$sample2022a)
+qqline(sample2022$sample2022a, 
+       distribution = function(p) 
+         qlnorm(p),
+       col = "red"
 )
 
-## qqt
-qqt(sample2022$sample2022a, df = 4)
-qqline(
-  sample2022$sample2022a,
-  distribution = function(p)
-    qt(p, df = 4),
-  col = "red"
+## qq chisq
+qqchisq(sample2022$sample2022a, df = 4)
+qqline(sample2022$sample2022a,
+       distribution = function(p)
+         qchisq(p, df = 4),
+       col = "red"
 )
 
 ## qq exp(1)
@@ -119,21 +102,20 @@ qqline(
   col = "red"
 )
 
+## fitting with a and b
+qqexp(sample2022$sample2022a)
+b <- sqrt(var(sample2022$sample2022a))/1/1^2
+b
+a <- mean(sample2022$sample2022a) - b*1/1
+a
+abline(a=a, b=b,
+       col = "red")
+
 ## qq exp(1), transform: log 
 logData <- log(sample2022$sample2022a)
 qqexp(logData)
 qqline(
   logData,
-  distribution = function(p)
-    qexp(p, rate = 1),
-  col = "red"
-)
-
-## qq exp(1), transform: log10
-log10Data <- log10(sample2022$sample2022a)
-qqexp(log10Data)
-qqline(
-  log10Data,
   distribution = function(p)
     qexp(p, rate = 1),
   col = "red"
@@ -191,7 +173,8 @@ qqline(
 
 alpha = 0.05
 
-KS_test <- ks.test(sample2022$sample2022b, pgompertz(x, shape = 1, scale = 0.2))
+KS_test <- ks.test(sample2022$sample2022b, 
+                   pgompertz(seq(0,1,by=0.1), shape = 1, scale = 0.2))
 KS_test
 
 KS_score <- KS_test$statistic
@@ -209,17 +192,13 @@ range(sample2022$sample2022b)
 length(sample2022$sample2022b)
 quantiles = length(sample2022$sample2022b)/5
 
-breaks <- qgompertz(c(1/quantiles,2*1/quantiles,3*1/quantiles,
-                      4*1/quantiles,5*1/quantiles,6*1/quantiles,
-                      7*1/quantiles,8*1/quantiles,9*1/quantiles,
-                      10*1/quantiles,11*1/quantiles,12*1/quantiles,
-                      13*1/quantiles,14*1/quantiles,15*1/quantiles), 
-                   shape = 1, 
-                   scale = 0.2)
+breaks <- qgompertz(seq(0,1,by=1/quantiles), 
+                    shape = 1, 
+                    scale = 0.2)
 
 Chisq_test <- chisquare(sample2022$sample2022b, 
                         pgompertz,
-                        k = 10,
+                        k = 16,
                         lb = 0,
                         ub = 10,
                         breaks,
@@ -277,46 +256,111 @@ colnames(body_data) <- c("Biacromial diameter",
 body_data_male <- subset(body_data, body_data$Gender == 1)
 
 #2.4a
-BMI <- body_data_male$Weight / (body_data_male$Height/100)^2
+BMI_male <- body_data_male$Weight / (body_data_male$Height/100)^2
 
-hist(
-  BMI, 
-  breaks = seq(min(BMI) - 5, max(BMI) + 5, by = 2),
+BMI_hist <- hist(
+  BMI_male, 
+  breaks = seq(min(BMI_male) - 5, max(BMI_male) + 5, by = 2),
   main = paste("Histogram for BMI in male"),
-  prob = F
+  prob = T
 )
 
 boxplot(
-  BMI,
+  BMI_male,
   main = "Boxplot BMI in male",
   xlab = "BMI"
 )
 
-hist(
-  body_data_male$`Ankle girth`, 
-  breaks = seq(min(BMI) - 5, max(BMI) + 5, by = 2),
-  main = paste("Histogram for ankle grith in male"),
-  prob = F,
+ankle_male <- body_data_male$`Ankle girth`
+
+ankle_hist <- hist(
+  ankle_male, 
+  breaks = seq(min(ankle_male) - 5, 
+               max(ankle_male) + 5, by = 2),
+  main = paste("Histogram for ankle girth in male"),
+  prob = T,
   xlab = "Ankle grith"
 )
 
 boxplot(
-  body_data_male$`Ankle girth`,
-  main = "Boxplot Ankle grith in male",
-  xlab = "Ankle grith"
+  ankle_male`,
+  main = "Boxplot Ankle girth in male",
+  xlab = "Ankle girth"
 )
 
 #2.4b
-qqplot(BMI,body_data_male$`Ankle girth`,
-       ylab="Ankle grith")
+qqplot(BMI_male,ankle_male,
+       ylab="Ankle girth",
+       main = "QQ-plot BMI vs. Ankle girth")
 
 #2.4c
 
+# Without the use of hypothesis tests, find for each of the two datasets of BMIs and ankle
+# measurements appropriate distributions, as members of certain location-scale families
+
+##BMI
+
+qqnorm(BMI_male,
+       main = "Normal Q-Q Plot BMI male")
+qqline(BMI_male,
+       distribution = function(p)
+         qnorm(p),
+       col = "red"
+)
+
+qqnorm(sqrt(BMI_male),
+       main = "Normal Q-Q Plot sqrt BMI male")
+qqline(sqrt(BMI_male),
+       distribution = function(p)
+         qnorm(p),
+       col = "red"
+)
+
+qqnorm(BMI_male,
+       main = "Normal Q-Q Plot BMI male fitted")
+b <- sqrt(var(BMI_male))/1
+b
+a <- mean(BMI_male) - b*0
+a
+abline(a=a, b=b,
+       col = "red")
+
+#LSF: N(0,1)
+
+##Ankle
+
+qqnorm(ankle_male,
+       main = "Normal Q-Q Plot ankle girth male")
+qqline(ankle_male,
+       distribution = function(p)
+         qnorm(p),
+       col = "red"
+)
+
+qqnorm(sqrt(ankle_male),
+       main = "Normal Q-Q Plot sqrt ankle girth male")
+qqline(sqrt(ankle_male),
+       distribution = function(p)
+         qnorm(p),
+       col = "red"
+)
+
+qqnorm(ankle_male,
+       main = "Normal Q-Q Plot ankle girth male fitted")
+b <- sqrt(var(ankle_male))/1
+b
+a <- mean(ankle_male) - b*0
+a
+abline(a=a, b=b,
+       col = "red")
+
+
 #2.4d
 
-differences <- (BMI - body_data_male$`Ankle girth`)
+differences <- (BMI_male - ankle_male)
 
-qqnorm(differences)
+qqnorm(differences,
+       main = "Q-Q Plot N(0,0.9^2)")
 
 qqline(
   differences,
@@ -327,17 +371,45 @@ qqline(
 
 ##transform: sqrt
 
-qqnorm(sqrt(abs(differences)))
+qqnorm(sqrt(abs(differences)),
+       main = "Q-Q Plot for squared root of differences")
 
 qqline(
   sqrt(abs(differences)),
   distribution = function(p)
-    qnorm(p, mean = 0, sd = 1),
+    qnorm(p, mean = 0, sd = 1.05),
   col = "red"
 )
 
-
 #2.4e
 
+shapiro.test(differences)
+
 #2.4f
+
+#full sample
+
+BMI_full <- body_data$Weight / (body_data$Height/100)^2
+
+shapiro.test(BMI_full)
+
+hist(BMI_full,
+     breaks = seq(min(BMI_full) - 5, 
+                  max(BMI_full) + 5, by = 2),
+     main = paste("Histogram for BMI full sample"),
+     prob = F
+)
+
+#first 50
+
+BMI_50 <- head(body_data$Weight,50) / (head(body_data$Height,50)/100)^2
+
+shapiro.test(BMI_50)
+
+hist(BMI_50,
+     breaks = seq(min(BMI_50) - 5, 
+                  max(BMI_50) + 5, by = 2),
+     main = paste("Histogram for BMI first 50 obs"),
+     prob = F
+)
 
