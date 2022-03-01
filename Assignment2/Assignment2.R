@@ -49,7 +49,8 @@ hist(sample2022$sample2022a,
      prob = T)
 
 ## fit to exp(1)
-qqnorm(sample2022$sample2022a)
+qqnorm(sample2022$sample2022a,
+       main = "Normal Q-Q Plot fitted to Exp(1)")
 qqline(
   sample2022$sample2022a,
   distribution = function(p)
@@ -59,7 +60,8 @@ qqline(
 
 
 ## fit to exp(0.75) shifted by -1 
-qqnorm(sample2022$sample2022a)
+qqnorm(sample2022$sample2022a,
+       main = "Normal Q-Q Plot fitted to Exp(0.75) shifted by -1")
 qqline(
   sample2022$sample2022a,
   distribution = function(p)
@@ -94,7 +96,8 @@ qqline(
 
 ## qq exp(1), transform: sqrt
 sqrtData <- sqrt(sample2022$sample2022a)
-qqexp(sqrtData)
+qqexp(sqrtData,
+      main = "Exp Q-Q Plot transformed by sqrt")
 qqline(
   sqrtData,
   distribution = function(p)
@@ -103,7 +106,8 @@ qqline(
 )
 
 ## fitting with a and b
-qqexp(sample2022$sample2022a)
+qqexp(sample2022$sample2022a,
+      main = "Exp Q-Q Plot fitted")
 b <- sqrt(var(sample2022$sample2022a))/1/1^2
 b
 a <- mean(sample2022$sample2022a) - b*1/1
@@ -113,7 +117,8 @@ abline(a=a, b=b,
 
 ## qq exp(1), transform: log 
 logData <- log(sample2022$sample2022a)
-qqexp(logData)
+qqexp(logData,
+      main = "Exp Q-Q Plot transformed by log")
 qqline(
   logData,
   distribution = function(p)
@@ -135,7 +140,8 @@ qqline(
 )
 
 ##transform: sqrt
-qqnorm(sqrt(sample2022$sample2022b))
+qqnorm(sqrt(sample2022$sample2022b),
+       main = "Normal Q-Q Plot transformed by sqrt")
 qqline(
   sqrt(sample2022$sample2022b),
   distribution = function(p)
@@ -144,7 +150,8 @@ qqline(
 )
 
 ##transform: log
-qqnorm(log(sample2022$sample2022b))
+qqnorm(log(sample2022$sample2022b),
+       main = "Normal Q-Q Plot transformed by log")
 qqline(
   log(sample2022$sample2022b),
   distribution = function(p)
@@ -153,19 +160,12 @@ qqline(
 )
 
 ##scale to N(0,1.2^2)
-qqnorm(sqrt(sample2022$sample2022b))
+qqnorm(sqrt(sample2022$sample2022b),
+       main = "Normal Q-Q Plot sqrt scaled to N(0,1.2^2")
 qqline(
   sqrt(sample2022$sample2022b),
   distribution = function(p) 
     qnorm(p, mean = 0, sd = 1.2),
-  col = "red"
-)
-
-qqexp(sqrt(sample2022$sample2022b))
-qqline(
-  sqrt(sample2022$sample2022b),
-  distribution = function(p)
-    qexp(p, rate =1),
   col = "red"
 )
 
@@ -256,7 +256,7 @@ colnames(body_data) <- c("Biacromial diameter",
 body_data_male <- subset(body_data, body_data$Gender == 1)
 
 #2.4a
-BMI_male <- body_data_male$Weight / (body_data_male$Height/100)^2
+BMI_male = body_data_male$Weight / (body_data_male$Height/100)^2
 
 BMI_hist <- hist(
   BMI_male, 
@@ -271,7 +271,7 @@ boxplot(
   xlab = "BMI"
 )
 
-ankle_male <- body_data_male$`Ankle girth`
+ankle_male = body_data_male$`Ankle girth`
 
 ankle_hist <- hist(
   ankle_male, 
@@ -283,7 +283,7 @@ ankle_hist <- hist(
 )
 
 boxplot(
-  ankle_male`,
+  ankle_male,
   main = "Boxplot Ankle girth in male",
   xlab = "Ankle girth"
 )
@@ -291,7 +291,8 @@ boxplot(
 #2.4b
 qqplot(BMI_male,ankle_male,
        ylab="Ankle girth",
-       main = "QQ-plot BMI vs. Ankle girth")
+       main = "QQ-plot BMI vs. Ankle girth"
+)
 
 #2.4c
 
@@ -308,14 +309,6 @@ qqline(BMI_male,
        col = "red"
 )
 
-qqnorm(sqrt(BMI_male),
-       main = "Normal Q-Q Plot sqrt BMI male")
-qqline(sqrt(BMI_male),
-       distribution = function(p)
-         qnorm(p),
-       col = "red"
-)
-
 qqnorm(BMI_male,
        main = "Normal Q-Q Plot BMI male fitted")
 b <- sqrt(var(BMI_male))/1
@@ -325,7 +318,14 @@ a
 abline(a=a, b=b,
        col = "red")
 
-#LSF: N(0,1)
+qqt(log(BMI_male), df = 8,
+    main = "t_8 Q-Q Plot BMI male"
+)
+qqline(log(BMI_male),
+       distribution = function(p)
+         qt(p, df = 8),
+       col = "red"
+)
 
 ##Ankle
 
@@ -353,7 +353,6 @@ a <- mean(ankle_male) - b*0
 a
 abline(a=a, b=b,
        col = "red")
-
 
 #2.4d
 
@@ -412,4 +411,3 @@ hist(BMI_50,
      main = paste("Histogram for BMI first 50 obs"),
      prob = F
 )
-
