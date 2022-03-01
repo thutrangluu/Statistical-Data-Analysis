@@ -139,8 +139,8 @@ qqline(
   col = "red"
 )
 
-#Exercise 2.3
-#a.
+##Exercise 2.3
+#2.3a.
 
 par(pty = "s", mfrow = c(1, 3))
 
@@ -174,13 +174,20 @@ qqline(
 qqnorm(sqrt(sample2022$sample2022b))
 qqline(
   sqrt(sample2022$sample2022b),
-  distribution = function(p)
+  distribution = function(p) 
     qnorm(p, mean = 0, sd = 1.2),
   col = "red"
 )
 
+qqexp(sqrt(sample2022$sample2022b))
+qqline(
+  sqrt(sample2022$sample2022b),
+  distribution = function(p)
+    qexp(p, rate =1),
+  col = "red"
+)
 
-#b.
+#2.3b.
 
 alpha = 0.05
 
@@ -196,12 +203,17 @@ KS_pvalue
 KS_reject <- if(KS_pvalue < alpha) TRUE else FALSE
 KS_reject
 
-#c.
+#2.3c.
 
 range(sample2022$sample2022b)
 length(sample2022$sample2022b)
+quantiles = length(sample2022$sample2022b)/5
 
-breaks <- qgompertz(c(0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9), 
+breaks <- qgompertz(c(1/quantiles,2*1/quantiles,3*1/quantiles,
+                      4*1/quantiles,5*1/quantiles,6*1/quantiles,
+                      7*1/quantiles,8*1/quantiles,9*1/quantiles,
+                      10*1/quantiles,11*1/quantiles,12*1/quantiles,
+                      13*1/quantiles,14*1/quantiles,15*1/quantiles), 
                    shape = 1, 
                    scale = 0.2)
 
@@ -264,6 +276,7 @@ colnames(body_data) <- c("Biacromial diameter",
 
 body_data_male <- subset(body_data, body_data$Gender == 1)
 
+#2.4a
 BMI <- body_data_male$Weight / (body_data_male$Height/100)^2
 
 hist(
@@ -292,3 +305,39 @@ boxplot(
   main = "Boxplot Ankle grith in male",
   xlab = "Ankle grith"
 )
+
+#2.4b
+qqplot(BMI,body_data_male$`Ankle girth`,
+       ylab="Ankle grith")
+
+#2.4c
+
+#2.4d
+
+differences <- (BMI - body_data_male$`Ankle girth`)
+
+qqnorm(differences)
+
+qqline(
+  differences,
+  distribution = function(p)
+    qnorm(p, mean = 0, sd = 0.9),
+  col = "red"
+)
+
+##transform: sqrt
+
+qqnorm(sqrt(abs(differences)))
+
+qqline(
+  sqrt(abs(differences)),
+  distribution = function(p)
+    qnorm(p, mean = 0, sd = 1),
+  col = "red"
+)
+
+
+#2.4e
+
+#2.4f
+
