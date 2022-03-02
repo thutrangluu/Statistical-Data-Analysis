@@ -178,10 +178,10 @@ KS_test
 KS_score <- KS_test$statistic
 KS_score
 
-KS_pvalue <- KS_test$p.value
-KS_pvalue
+KS_p_value <- KS_test$p.value
+KS_p_value
 
-KS_reject <- if(KS_pvalue < alpha) TRUE else FALSE
+KS_reject <- if(KS_p_value < alpha) TRUE else FALSE
 KS_reject
 
 #2.3c.
@@ -210,10 +210,10 @@ Chisq_breaks
 Chisq_score <- Chisq_test$chisquare
 Chisq_score
 
-Chisq_pvalue <- Chisq_test$pr
-Chisq_pvalue
+Chisq_p_value <- Chisq_test$pr
+Chisq_p_value
 
-Chisq_reject <- if(Chisq_pvalue < alpha) TRUE else FALSE
+Chisq_reject <- if(Chisq_p_value < alpha) TRUE else FALSE
 Chisq_reject
 
 mylist <- list(KS_score, KS_pvalue, KS_reject,
@@ -387,7 +387,7 @@ qqline(
 
 #2.4e
 
-shapiro.test(abs(differences))
+shapiro.test(differences)
 
 #2.4f
 
