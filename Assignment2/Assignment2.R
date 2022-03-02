@@ -22,7 +22,6 @@ t4 <- qt(seq(0, 1, by = 0.025), df = 4)
 chi2 <- qchisq(seq(0, 1, by = 0.025), df = 3)
 t6 <- qt(seq(0, 1, by = 0.025), df = 6)
 
-par(pty = "s", mfrow = c(1, 3))
 plot(norm,
      exp,
      type = "l",
@@ -43,7 +42,6 @@ plot(
 )
 
 #2.2b
-par(pty = "s", mfrow = c(1, 3))
 
 hist(sample2022$sample2022a,
      prob = T)
@@ -219,7 +217,8 @@ Chisq_reject <- if(Chisq_pvalue < alpha) TRUE else FALSE
 Chisq_reject
 
 mylist <- list(KS_score, KS_pvalue, KS_reject,
-              Chisq_breaks, Chisq_score, Chisq_pvalue, Chisq_reject)
+              Chisq_breaks, Chisq_score, Chisq_pvalue, Chisq_reject,
+              stud_no = c(2695303, 2665825))
 save(mylist, file="Assignment2/myfile2_46.RData")
 
 #Exercise 2.4
@@ -296,9 +295,6 @@ qqplot(BMI_male,ankle_male,
 
 #2.4c
 
-# Without the use of hypothesis tests, find for each of the two datasets of BMIs and ankle
-# measurements appropriate distributions, as members of certain location-scale families
-
 ##BMI
 
 qqnorm(BMI_male,
@@ -355,8 +351,17 @@ abline(a=a, b=b,
        col = "red")
 
 #2.4d
-
 differences <- (BMI_male - ankle_male)
+
+qqnorm(differences,
+       main = "Q-Q Plot N(0,1)")
+
+qqline(
+  differences,
+  distribution = function(p)
+    qnorm(p, mean = 0, sd = 1),
+  col = "red"
+)
 
 qqnorm(differences,
        main = "Q-Q Plot N(0,0.9^2)")
@@ -382,7 +387,7 @@ qqline(
 
 #2.4e
 
-shapiro.test(differences)
+shapiro.test(abs(differences))
 
 #2.4f
 
