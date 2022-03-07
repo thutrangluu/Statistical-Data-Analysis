@@ -26,6 +26,9 @@ plot(norm,
      exp,
      type = "l",
      main = paste("True QQ Plot N(0,1) vs. Exp(3)"))
+
+## heavier left+right
+
 plot(
   norm2,
   t4,
@@ -40,6 +43,9 @@ plot(
   col = "blue",
   main = paste("True QQ Plot t_6 vs. Chi-squared")
 )
+
+
+##chi has lighter left tail has heavier right tail, 
 
 #2.2b
 
@@ -414,5 +420,5 @@ hist(BMI_50,
      breaks = seq(min(BMI_50) - 5, 
                   max(BMI_50) + 5, by = 2),
      main = paste("Histogram for BMI first 50 obs"),
-     prob = F
+     prob = T
 )

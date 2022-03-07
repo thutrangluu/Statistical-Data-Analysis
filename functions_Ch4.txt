@@ -1,0 +1,17 @@
+h_opt <- function(x){
+  (4*pi)^(-1/10)*(3/8*pi^(-1/2))^(-1/5) * sd(x) * length(x)^(-1/5)
+}
+
+CV <- function(h, sample, kernel){
+  f_hat <- density(x=sample, bw=h, kernel=kernel, from=min(sample)-4*h, to=max(sample)+4*h, n=2^10)$y
+  
+  n <- length(sample)
+  
+  # Derive f-hat_{-i}(X_i)
+  f_hat_wo_i <- function(i, sample, h, kernel){
+    return(density(x=sample[-i], bw=h, kernel=kernel, from=sample[i], to=sample[i], n=1)$y)
+  }
+  
+  cond_exp_fY <- mean(sapply(1:n, f_hat_wo_i, sample=sample, h=h, kernel=kernel))
+  return(sum(f_hat^2)*(max(sample)-min(sample)+8*h)/(2^10) -2*cond_exp_fY)
+}
