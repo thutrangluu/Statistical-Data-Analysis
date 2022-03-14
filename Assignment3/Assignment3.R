@@ -1,8 +1,6 @@
 source("functions_Ch4.txt")
 source("functions_Ch5.txt")
 
-
-
 #3.2
 # The file sample32.txt contains a sample of n = 100 observations. Pick a
 # kernel function and a bandwidth, and use a kernel density estimator to estimate the density
@@ -14,7 +12,7 @@ h_opt_norm32 = h_opt(sample32)
 h_opt_logis32 = (4 * pi) ^ (-1 / 10) * (pi ^ 5 * 13 / (3 ^ (7 / 2) * 35)) ^
   (-1 / 5) * sd(sample32) * length(sample32) ^ (-1 / 5)
 
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 3))
 
 x32 <-
   seq(min(sample32) - 3 * h_opt_norm32,
@@ -29,7 +27,8 @@ dense32_norm <-
     to = max(x32)
   )
 
-hist(sample32, prob = T, ylim = c(0, max(dense32_norm$y)))
+hist(sample32, prob = T, ylim = c(0, max(dense32_norm$y)),
+     main = "Histogram of sample32, h_norm KDE")
 lines(x32, dense32_norm$y, col = "red")
 
 
@@ -46,7 +45,8 @@ dense32_logis <-
     to = max(x32_logis)
   )
 
-hist(sample32, prob = T, ylim = c(0, max(dense32_logis$y)))
+hist(sample32, prob = T, ylim = c(0, max(dense32_logis$y)),
+     main = "Histogram of sample32, h_logistics KDE")
 lines(x32_logis, dense32_logis$y, col = "red")
 
 plot(dense32_logis, col = "red",
@@ -71,17 +71,38 @@ lines(dense32_norm, col = "blue")
 
 sample33 <- scan("sample33.txt")
 
-hist33 <- hist(sample33, prob = T)
-h_opt_norm33 = h_opt(sample33)
+par(mfrow = c(1, 2))
+
 y <- log(sample33)
 
+h_opt_norm33 = h_opt(y)
+h_opt_exp33 = (4 * pi) ^ (-1 / 10) * (0.5) ^(-1 / 5) * 
+  sd(y) * length(y) ^ (-1 / 5)
+
 yrange <- seq(min(y), max(y), length.out = 512)
+
+hist(sample33, prob = T, 
+     main = "Histogram of sample33, h_norm KDE")
 lines(
   exp(yrange),
   density(
     y,
     kernel = "gaussian",
     bw = h_opt_norm33,
+    from = min(yrange),
+    to = max(yrange)
+  )$y / exp(yrange),
+  col = "red"
+)
+
+hist(sample33, prob = T, 
+     main = "Histogram of sample33, h_exp KDE")
+lines(
+  exp(yrange),
+  density(
+    y,
+    kernel = "gaussian",
+    bw = h_opt_exp33,
     from = min(yrange),
     to = max(yrange)
   )$y / exp(yrange),
@@ -100,11 +121,9 @@ lines(
 
 sample34 <- scan("sample34.txt")
 
-hist34 <- hist(sample34, prob = T)
-
 h_opt34 <- h_opt(sample34)
 
-h_vec <- seq(0.001, 3.0, by = 0.005)
+h_vec <- seq(0.001, 10.0, by = 0.005)
 
 cv_crit <- sapply(h_vec, CV, sample = sample34, kernel = "gauss")
 h_opt34_cv <- h_vec[which(cv_crit == min(cv_crit))]
@@ -135,13 +154,16 @@ dense34_cv <- density(
   to = max(x34_cv),
 )
 
-hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)))
+hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
+     main = "Histogram of sample34, h_norm KDE")
 lines(x34, dense34$y, col = "red")
 
-hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)))
+hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
+     main = "Histogram of sample34, default KDE")
 lines(density(sample34), col = "red")
 
-hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)))
+hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
+     main = "Histogram of sample32, CV KDE")
 lines(x34_cv, dense34_cv$y, col = "red")
 
 
@@ -289,6 +311,6 @@ mylist <- list(
   var_empBS = var_empBS,
   var_parBS = var_parBS,
   var_realizations = var_realizations,
-  stud_no = c(2695303, 2665825)
+  stud_no = c(2695303)
 )
 save(mylist, file = "Assignment3/myfile3_46.RData")
