@@ -175,7 +175,7 @@ hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
 lines(x34, dense34$y, col = "red")
 
 hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
-     main = "Histogram of sample34, default KDE")
+     main = "Histogram of sample34, h_dexp KDE")
 lines(x34_exp, dense34_exp$y, col = "red")
 
 hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
