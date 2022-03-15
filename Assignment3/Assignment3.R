@@ -2,10 +2,6 @@ source("functions_Ch4.txt")
 source("functions_Ch5.txt")
 
 #3.2
-# The file sample32.txt contains a sample of n = 100 observations. Pick a
-# kernel function and a bandwidth, and use a kernel density estimator to estimate the density
-# based on the sample.
-# Note: don’t just use trial and error but proceed systematically, i.e. motivate your choices.
 
 sample32 <- scan("sample32.txt")
 h_opt_norm32 = h_opt(sample32)
@@ -27,7 +23,9 @@ dense32_norm <-
     to = max(x32)
   )
 
-hist(sample32, prob = T, ylim = c(0, max(dense32_norm$y)),
+hist(sample32,
+     prob = T,
+     ylim = c(0, max(dense32_norm$y)),
      main = "Histogram of sample32, h_norm KDE")
 lines(x32, dense32_norm$y, col = "red")
 
@@ -45,7 +43,9 @@ dense32_logis <-
     to = max(x32_logis)
   )
 
-hist(sample32, prob = T, ylim = c(0, max(dense32_logis$y)),
+hist(sample32,
+     prob = T,
+     ylim = c(0, max(dense32_logis$y)),
      main = "Histogram of sample32, h_logistics KDE")
 lines(x32_logis, dense32_logis$y, col = "red")
 
@@ -56,19 +56,6 @@ lines(dense32_norm, col = "blue")
 
 #3.3
 
-# The file sample33.txt contains a sample of n = 80 positive observations.
-# Find a suitable kernel density estimate based on this sample.
-# Hint: it seems appropriate to assign no mass to ˆf(x) for x < 0. Take a look at Lecture
-# 4 to find out how this can be achieved in a reasonable way. Use just one of the available
-# approaches.
-# Hint: if you would like to use the log-transformation and first find a suitable kernel density
-# estimate ˆfy based on the log-transformed sample y, i.e. y1 = log(x1),...,yn = log(xn), you
-# can obtain the density estimate ˆfx for the original sample based on
-# yrange <- seq(min(y), max(y), length.out=512)
-# lines(exp(yrange), density(y, ..., from=min(yrange) , to=max(yrange))$y/exp(yrange))
-# This is due to Fy(t) = Fx(exp(t)) for the cumulative distribution functions of the y- and
-# x-samples, respectively. Thus, fy(t) = fx(exp(t)) ·exp(t) for their densities.
-
 sample33 <- scan("sample33.txt")
 
 par(mfrow = c(1, 2))
@@ -76,12 +63,12 @@ par(mfrow = c(1, 2))
 y <- log(sample33)
 
 h_opt_norm33 = h_opt(y)
-h_opt_exp33 = (4 * pi) ^ (-1 / 10) * (0.5) ^(-1 / 5) * 
+h_opt_exp33 = (4 * pi) ^ (-1 / 10) * (0.5) ^ (-1 / 5) *
   sd(y) * length(y) ^ (-1 / 5)
 
 yrange <- seq(min(y), max(y), length.out = 512)
 
-hist(sample33, prob = T, 
+hist(sample33, prob = T,
      main = "Histogram of sample33, h_norm KDE")
 lines(
   exp(yrange),
@@ -95,7 +82,7 @@ lines(
   col = "red"
 )
 
-hist(sample33, prob = T, 
+hist(sample33, prob = T,
      main = "Histogram of sample33, h_exp KDE")
 lines(
   exp(yrange),
@@ -111,19 +98,11 @@ lines(
 
 #3.4
 
-# The file sample34.txt contains a sample of n = 90 observations. Find
-# two kernel density estimates based on this sample: for the first, use the bandwidth obtained
-# from the function h opt, for the second, use the bandwidth obtained from the cross-validation
-# criterion. Compare these estimates to the true density function, which is a doubly exponential
-# density with location 0 and scale 1. Compare the density estimate with the true density and
-# argue which kernel density estimate seems preferable.
-# Tip: first explore the functions h opt & CV.
-
 sample34 <- scan("sample34.txt")
 
 h_opt34 <- h_opt(sample34)
 
-h_opt_exp34 = (4 * pi) ^ (-1 / 10) * (0.5) ^(-1 / 5) * 
+h_opt_exp34 = (4 * pi) ^ (-1 / 10) * (0.5) ^ (-1 / 5) *
   sd(sample34) * length(sample34) ^ (-1 / 5)
 
 h_vec <- seq(0.001, 10.0, by = 0.005)
@@ -167,73 +146,71 @@ dense34_cv <- density(
   to = max(x34_cv),
 )
 
-
 par(mfrow = c(1, 3))
 
-hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
+hist(sample34,
+     prob = T,
+     ylim = c(0, max(density(sample34)$y)),
      main = "Histogram of sample34, h_norm KDE")
 lines(x34, dense34$y, col = "red")
 
-hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
+hist(sample34,
+     prob = T,
+     ylim = c(0, max(density(sample34)$y)),
      main = "Histogram of sample34, h_dexp KDE")
 lines(x34_exp, dense34_exp$y, col = "red")
 
-hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
-     main = "Histogram of sample32, CV KDE")
+hist(sample34,
+     prob = T,
+     ylim = c(0, max(density(sample34)$y)),
+     main = "Histogram of sample34, CV KDE")
 lines(x34_cv, dense34_cv$y, col = "red")
 
 ddexp <- function(x, loc, scale) {
   de <- numeric(length(x))
-  for(i in 1:length(x)) {
-    de[i] <- (2*scale)^-1 * exp(-abs(x[i]-loc)/scale)
+  for (i in 1:length(x)) {
+    de[i] <- (2 * scale) ^ -1 * exp(-abs(x[i] - loc) / scale)
   }
   de
 }
 
-par(mfrow = c(1,1))
+par(mfrow = c(1, 1))
 
-plot(seq(-5, 5, length.out = 90), ddexp(x = seq(-5, 5, length.out = 90), loc = 0, scale = 1),
-     type = "l",
-     ylab = "True double exponential density",
-     xlab = "x",
-     main = "KDE vs. true exponential density",
-     lwd = 1)
-lines(x34, dense34$y, col = "red")
-lines(x34_exp, dense34_exp$y, col = "blue")
+plot(
+  sort(sample34),
+  ddexp(
+    x = sort(sample34),
+    loc = 0,
+    scale = 1
+  ),
+  type = "l",
+  ylab = "True double exponential density",
+  xlab = "x",
+  main = "KDE vs. true doubleexponential density"
+)
+lines(x34, dense34$y, col = "red", lwd = 2)
+lines(x34_exp, dense34_exp$y, col = "blue", lwd = 3)
 lines(x34_cv, dense34_cv$y, col = "orange", lwd = 2)
-legend("topright",legend=c("true dense","h_norm", "h_dexp","h_cv"), 
-      fill=c("black", "red","blue","orange"))
+legend(
+  "topright",
+  legend = c("true dexp", "h_norm", "h_dexp", "h_cv"),
+  fill = c("black", "red", "blue", "orange")
+)
 
 #3.5
 
-# The functions bootstrap (in functions Ch5.txt), rt, mad could be useful for the following
-# exercise.
-# Exercise 3.5 (partially .RData file hand-in) One sample drawn from a t-distribution
-# with unknown degrees of freedom k > 0 is stored in the file t-sample.txt. With the help
-# of this sample, we would like to estimate the distribution of the median absolute deviation
-# statistic (see e.g. syllabus).
-
 tsample <- scan("t-sample.txt")
-par(mfrow = c(1,3))
+par(mfrow = c(1, 3))
 
 # a. Compute the median absolute deviation based on the given t-sample.
 
 mad_sample = mad(tsample)
 
-# b. Set the seed to 20220302 + [GROUP NO]. Then use the empirical bootstrap method ap-
-#   plied to the t-sample to generate B = 2000 bootstrap estimates of the median absolute
-# deviation statistic. Store these in a vector mad empBS in your R environment.
-
+# b.
 set.seed(20220302 + 1)
 
 B = 2000
-# mad_empBS = numeric(B)
-# for (i in 1:B) {
-#   xstar_emp <- sample(tsample, replace = TRUE)
-#   mad_empBS[i] = mad(xstar_emp)
-# }
-
-mad_empBS <- bootstrap(tsample, mad, B=2000)
+mad_empBS <- bootstrap(tsample, mad, B = 2000)
 
 set.seed(20220302 + 1)
 
@@ -243,11 +220,7 @@ abline(v = mean(mad_empBS),
        lwd = 2)
 sd(mad_empBS)
 
-# c. Repeat the steps of part b. (including setting back the seed) but with the parametric
-# bootstrap instead of the empirical bootstrap. Use ˆk = 2s2/(s2 −1) as an estimator of
-# the degrees of freedom k, where s2 denotes the sample variance. Call the vector which
-# contains the obtained parametrically bootstrapped statistics mad parBS.
-
+# c.
 set.seed(20220302 + 1)
 
 mad_parBS <- numeric(B)
@@ -263,18 +236,7 @@ abline(v = mean(mad_parBS),
        lwd = 2)
 sd(mad_parBS)
 
-# d. Plot two separate histograms of the bootstrap samples obtained in b. and c.
-# Compare them to another histogram for the true distribution of the median absolute
-# deviation. One can obtain this in the following way:
-#   Set the seed to 20220302 + [GROUP NO]. Then generate 2000 independent samples of
-# size 100 from the t-distribution with 10 degrees of freedom (which is the true un-
-# derlying distribution by the way!), and compute the median absolute deviation for
-# each sample; then store those 2000 realizations of the median absolute deviations in
-# the vector mad realizations and plot their histogram. Next to this, also plot the
-# histograms of mad empBS and mad parBS, and compare them with the histogram of
-# mad realizations.
-# Based on these comparisons, which bootstrap method seems preferable in the present
-# context? Motivate your answer.
+# d.
 
 set.seed(20220302 + 1)
 
@@ -290,58 +252,14 @@ abline(v = mean(mad_realizations),
        lwd = 2)
 sd(mad_realizations)
 
-# e. Use the empirical and the parametric bootstrap samples to find estimates of the vari-
-#   ance of the median absolute deviation statistic. Compare these two estimates with an
-# approximation of the true variance of that statistic, which could be obtained as the
-# sample variance of the realizations from part d.
-
+# e.
 #empirical
-
-# var_empBS = numeric(B)
-# for(i in 1:B){
-#   mad_xstar_emp <- sample(xstar_emp, replace = T)
-#   var_empBS[i] = var(mad_xstar_emp)
-# }
-# 
-# hist(var_empBS, prob = T)
-# abline(v = mean(var_empBS),
-#        col = "blue",
-#        lwd = 2)
-# sd(var_empBS)
-
 var_empBS = var(mad_empBS)
 
 # parametric
-
-# var_parBS = numeric(B)
-# for(i in 1:B){
-#   mad_xstar_par <- sample(xstar_par, replace = T)
-#   var_parBS[i] = var(mad_xstar_par)
-# }
-# 
-# hist(var_parBS, prob = T)
-# abline(v = mean(var_parBS),
-#        col = "blue",
-#        lwd = 2)
-# sd(var_parBS) = 0
-
 var_parBS = var(mad_parBS)
-  
+
 var_realizations = var(mad_realizations)
-
-# Hand in:
-#   For the the main report: from part d.: relevant plots, descriptions, and motivated answers.
-# Stored in your .RData file: from parts a.-e. the following entries of your list mylist in R:
-#   a.: mad sample: the value of the median absolute deviation statistic based on the t-sample,
-# b.: mad empBS: the vector of 2000 empirically bootstrapped median absolution deviation
-# statistics,
-# c.: mad parBS: the vector of 2000 parametrically bootstrapped median absolution deviation
-# statistics,
-# d.: mad realizations: the vector of 2000 realized median absolution deviation statistics,
-# e.: var empBS: the variance estimate based on mad empBS,
-# var parBS: the variance estimate based on mad empBS,
-# var realizations: the variance estimate based on mad realizations.
-
 
 mylist <- list(
   mad_sample = mad_sample,
