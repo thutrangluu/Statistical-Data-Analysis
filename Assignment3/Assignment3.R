@@ -123,12 +123,13 @@ sample34 <- scan("sample34.txt")
 
 h_opt34 <- h_opt(sample34)
 
+h_opt_exp34 = (4 * pi) ^ (-1 / 10) * (0.5) ^(-1 / 5) * 
+  sd(sample34) * length(sample34) ^ (-1 / 5)
+
 h_vec <- seq(0.001, 10.0, by = 0.005)
 
 cv_crit <- sapply(h_vec, CV, sample = sample34, kernel = "gauss")
 h_opt34_cv <- h_vec[which(cv_crit == min(cv_crit))]
-
-par(mfrow = c(1, 3))
 
 x34 <-
   seq(min(sample34) - 4 * h_opt34,
@@ -140,6 +141,18 @@ dense34 <- density(
   bw = h_opt34,
   from = min(x34),
   to = max(x34)
+)
+
+x34_exp <-
+  seq(min(sample34) - 4 * h_opt_exp34,
+      max(sample34) + 4 * h_opt_exp34,
+      length.out = 512)
+dense34_exp <- density(
+  sample34,
+  kernel = "gauss",
+  bw = h_opt_exp34,
+  from = min(x34_exp),
+  to = max(x34_exp),
 )
 
 x34_cv <-
@@ -154,18 +167,42 @@ dense34_cv <- density(
   to = max(x34_cv),
 )
 
+
+par(mfrow = c(1, 3))
+
 hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
      main = "Histogram of sample34, h_norm KDE")
 lines(x34, dense34$y, col = "red")
 
 hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
      main = "Histogram of sample34, default KDE")
-lines(density(sample34), col = "red")
+lines(x34_exp, dense34_exp$y, col = "red")
 
 hist(sample34, prob = T, ylim = c(0, max(density(sample34)$y)),
      main = "Histogram of sample32, CV KDE")
 lines(x34_cv, dense34_cv$y, col = "red")
 
+ddexp <- function(x, loc, scale) {
+  de <- numeric(length(x))
+  for(i in 1:length(x)) {
+    de[i] <- (2*scale)^-1 * exp(-abs(x[i]-loc)/scale)
+  }
+  de
+}
+
+par(mfrow = c(1,1))
+
+plot(seq(-5, 5, length.out = 90), ddexp(x = seq(-5, 5, length.out = 90), loc = 0, scale = 1),
+     type = "l",
+     ylab = "True double exponential density",
+     xlab = "x",
+     main = "KDE vs. true exponential density",
+     lwd = 1)
+lines(x34, dense34$y, col = "red")
+lines(x34_exp, dense34_exp$y, col = "blue")
+lines(x34_cv, dense34_cv$y, col = "orange", lwd = 2)
+legend("topright",legend=c("true dense","h_norm", "h_dexp","h_cv"), 
+      fill=c("black", "red","blue","orange"))
 
 #3.5
 
@@ -189,7 +226,7 @@ mad_sample = mad(tsample)
 
 set.seed(20220302 + 1)
 
-# B = 2000
+B = 2000
 # mad_empBS = numeric(B)
 # for (i in 1:B) {
 #   xstar_emp <- sample(tsample, replace = TRUE)
@@ -213,7 +250,7 @@ sd(mad_empBS)
 
 set.seed(20220302 + 1)
 
-mad_parBS = numeric(B)
+mad_parBS <- numeric(B)
 k <- 2 * var(tsample) / (var(tsample) - 1)
 for (i in 1:B) {
   xstar_par <- rt(length(tsample), df = k)
