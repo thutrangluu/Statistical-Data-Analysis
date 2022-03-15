@@ -27,7 +27,7 @@ hist(sample32,
      prob = T,
      ylim = c(0, max(dense32_norm$y)),
      main = "Histogram of sample32, h_norm KDE")
-lines(x32, dense32_norm$y, col = "red")
+lines(x32, dense32_norm$y, col = "blue")
 
 
 x32_logis <-
