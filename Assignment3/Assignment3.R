@@ -189,19 +189,22 @@ mad_sample = mad(tsample)
 
 set.seed(20220302 + 1)
 
-B = 2000
-mad_empBS = numeric(B)
-for (i in 1:B) {
-  xstar_emp <- sample(tsample, replace = TRUE)
-  mad_empBS[i] = mad(xstar_emp)
-}
+# B = 2000
+# mad_empBS = numeric(B)
+# for (i in 1:B) {
+#   xstar_emp <- sample(tsample, replace = TRUE)
+#   mad_empBS[i] = mad(xstar_emp)
+# }
+
+mad_empBS <- bootstrap(tsample, mad, B=2000)
+
+set.seed(20220302 + 1)
 
 hist(mad_empBS, prob = T)
 abline(v = mean(mad_empBS),
        col = "blue",
        lwd = 2)
 sd(mad_empBS)
-
 
 # c. Repeat the steps of part b. (including setting back the seed) but with the parametric
 # bootstrap instead of the empirical bootstrap. Use ˆk = 2s2/(s2 −1) as an estimator of
