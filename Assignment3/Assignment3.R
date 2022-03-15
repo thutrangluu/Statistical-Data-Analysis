@@ -207,12 +207,12 @@ par(mfrow = c(1, 3))
 mad_sample = mad(tsample)
 
 # b.
-set.seed(20220302 + 1)
+set.seed(20220302 + 10)
 
 B = 2000
 mad_empBS <- bootstrap(tsample, mad, B = 2000)
 
-set.seed(20220302 + 1)
+set.seed(20220302 + 10)
 
 hist(mad_empBS, prob = T)
 abline(v = mean(mad_empBS),
@@ -221,7 +221,7 @@ abline(v = mean(mad_empBS),
 sd(mad_empBS)
 
 # c.
-set.seed(20220302 + 1)
+set.seed(20220302 + 10)
 
 mad_parBS <- numeric(B)
 k <- 2 * var(tsample) / (var(tsample) - 1)
@@ -238,7 +238,7 @@ sd(mad_parBS)
 
 # d.
 
-set.seed(20220302 + 1)
+set.seed(20220302 + 10)
 
 mad_realizations = numeric(B)
 for (i in 1:B) {
@@ -269,6 +269,6 @@ mylist <- list(
   var_empBS = var_empBS,
   var_parBS = var_parBS,
   var_realizations = var_realizations,
-  stud_no = c(2695303)
+  stud_no = c(2695303,2706039)
 )
-save(mylist, file = "Assignment3/myfile3_46.RData")
+save(mylist, file = "Assignment3/myfile3_10.RData")
