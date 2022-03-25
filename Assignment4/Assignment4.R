@@ -64,9 +64,16 @@ mad_quant <- mad(quant_empBS)
 # . You can select e.g. the PRRP data using
 # R-command thromboglobulin$PRRP or thromboglobulin[[1]]. Or use attach(thromboglobulin)3
 # so that the variables PRRP, SDRP and CTRP are defined.
+
 # a. Determine a two-sided 90%-bootstrap confidence interval for the mean of the underlying distribution of PRRP. Take B sufficiently large.
+
+
 # b. Repeat part a with the median instead of the mean.
+
+
 # c. Compare the answers of a and b. Which estimator of location do you prefer and why?
+
+
 #   d. Determine a 90%-bootstrap confidence interval for the difference in mean between the two groups
 # SDRP and PRRP. What can you conclude from this interval about the difference in mean of the
 # two underlying distributions?
