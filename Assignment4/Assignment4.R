@@ -1,15 +1,23 @@
 source("functions_Ch3.txt")
 source("functions_Ch5.txt")
 
-p = seq(0, 1, 0.05)
+p = seq(0, 1, by = 0.05)
+B = 5000
 
-# Exercise 4.1 The file birthweight.txt contains data on birth weights (in grams).
+# Exercise 4.1 
 birthweight <- scan("birthweight.txt")
 
-# a. Explore the distribution of the birth weight data graphically and find an appropriate distribution
-# where the data could have originated from.
+# a.
+
+par(mfrow = c(2,2), pty = 's')
 
 hist(birthweight, prob = T)
+abline(v = mean(birthweight),
+       col = "blue",
+       lwd = 2)
+abline(v = median(birthweight),
+       col = "red",
+       lwd = 2)
 
 boxplot(birthweight)
 
@@ -21,7 +29,7 @@ qqline(
   col = "red",
 )
 
-qqnorm(birthweight)
+qqnorm(birthweight, main = "Normal QQ-Plot N(0,1.05)")
 qqline(
   birthweight,
   distribution = function(p)
@@ -29,35 +37,48 @@ qqline(
   col = "red",
 )
 
-
-# b. Estimate the 10%-quantile of birth weights and find a bootstrap estimate of the median absolute
-# deviation (“mad”; see syllabus) of the 10% quantile estimator. Motivate and explain your choice
-# of bootstrap method.
+# b.
 
 quantile(birthweight, 0.1)
 
+## Empirical BS
+set.seed(2695303 + 46)
 quant_empBS <-
   bootstrap(birthweight,
             statistic = quantile,
-            B = 2000,
+            B = B,
             probs = 0.1)
 
-mad_quant <- mad(quant_empBS)
+mad_quant_emp <- mad(quant_empBS)
 
-# c. Now, repeat part b but use as a bootstrap method a parametric bootstrap based on an exponential distribution with suitably estimated rate parameter.1 Compare the resulting estimate
-# of the median absolute deviation of the 10%-quantile estimator with the one found in part b.
-# Refer to the theory of Lecture 5, to explain what went wrong.
+## Parametric BS
 
+set.seed(2695303 + 46)
+quant_parBS <- numeric(B)
+for (i in 1:B) {
+  xstar_par <- rnorm(length(birthweight), mean = mean(birthweight), sd = sd(birthweight))
+  quant_parBS[i] = quantile(xstar_par, probs = 0.1)
+}
 
+mad_quant_par <- mad(quant_parBS)
 
-# d. Reprogram part c so that everything, i.e. the calculation of the median absolute deviations,
-# the realizations of (e.g. B = 1000) bootstrap samples, and the parameter estimation is done in
-# exactly one line in R code. Avoid the use of loops.
+# c. 
+set.seed(2695303 + 46)
+quant_parBSc <- numeric(B)
+for (i in 1:B) {
+  xstar_par <- rexp(length(birthweight), rate = 1 / mean(birthweight))
+  quant_parBSc[i] = quantile(xstar_par, probs = 0.1)
+}
 
+mad_quant_parc <- mad(quant_parBSc)
 
-# NB. You could, for example, use a clever combination of the R functions mad, var, replicate,
-# quantile, rexp, mean.
-# Hand in: relevant plots, descriptions, results, answers to the questions, and your comments.
+# d. 
+
+set.seed(2695303 + 46)
+quant_parBSd <-
+  replicate(B, quantile(rexp(length(birthweight), rate = 1 / mean(birthweight)),
+                     probs = 0.1))
+mad_quant_pard <- mad(quant_parBSd)
 
 # Exercise 4.2 Read Examples 3.4 and 5.4 in the syllabus about data on β-thromboglobulin levels
 # which can be loaded by the R-code in thromboglobulin.txt2
@@ -65,17 +86,117 @@ mad_quant <- mad(quant_empBS)
 # R-command thromboglobulin$PRRP or thromboglobulin[[1]]. Or use attach(thromboglobulin)3
 # so that the variables PRRP, SDRP and CTRP are defined.
 
-# a. Determine a two-sided 90%-bootstrap confidence interval for the mean of the underlying distribution of PRRP. Take B sufficiently large.
+source("thromboglobulin.txt")
+PRRP = thromboglobulin$PRRP
+SDRP = thromboglobulin$SDRP
 
+# a. Determine a two-sided
+# 90%-bootstrap confidence interval for the mean of the underlying distribution of PRRP.
+# Take B sufficiently large.
+
+PRRP_mean <- mean(PRRP)
+
+set.seed(2695303 + 46)
+PRRP_BSmean <- bootstrap(PRRP, statistic = mean, B = B)
+PRRP_zstar_a = PRRP_BSmean - PRRP_mean
+
+c(PRRP_mean - quantile(PRRP_zstar_a, 0.95),
+  PRRP_mean - quantile(PRRP_zstar_a, 0.05))
 
 # b. Repeat part a with the median instead of the mean.
 
+PRRP_median <- median(PRRP)
 
-# c. Compare the answers of a and b. Which estimator of location do you prefer and why?
+set.seed(2695303 + 46)
+PRRP_BSmedian <- bootstrap(PRRP, statistic = median, B = B)
+PRRP_zstar_b = PRRP_BSmedian - PRRP_median
 
+c(
+  PRRP_median - quantile(PRRP_zstar_b, 0.95),
+  PRRP_median - quantile(PRRP_zstar_b, 0.05)
+)
 
-#   d. Determine a 90%-bootstrap confidence interval for the difference in mean between the two groups
+# d. Determine a 90%-bootstrap confidence interval for the difference in mean between the two groups
 # SDRP and PRRP. What can you conclude from this interval about the difference in mean of the
 # two underlying distributions?
-#   Note: this is a two sample problem, like in Example 5.4.
-# Hand in: the computed intervals and your answers to parts c and d.
+
+SDRP_mean = mean(SDRP)
+
+diff_mean = SDRP_mean - PRRP_mean
+
+set.seed(2695303 + 46)
+PRRP_BS <- bootstrap(PRRP, statistic = mean, B = B)
+
+set.seed(2695303 + 46)
+SDRP_BS <- bootstrap(SDRP, statistic = mean, B = B)
+
+zstar_d = (SDRP_BS - PRRP_BS) - diff_mean
+
+c(diff_mean - quantile(zstar_d, 0.95),
+  diff_mean - quantile(zstar_d, 0.05))
+
+par(mfrow = c(1,1), pty = 's')
+hist(zstar_d, prob = T)
+abline(v = mean(zstar_d),
+       col = "blue",
+       lwd = 2)
+
+# 3 no standardize
+# ks is not really reliable
+
+# Exercise 4.3
+source("light.txt")
+
+light_1879 <- light$`1879`
+light_1882 <- light$`1882`
+
+hist(light_1879)
+hist(light_1882)
+
+Dn <- function(x) {
+  f <- ecdf(x)
+  y <- numeric(length(x))
+  for (i in 1:length(x)) {
+    y [i] = abs(f(x[i]) - pnorm((x[i]-mean(x))/ sd(x)))
+  }
+  return (max(y))
+}
+
+#b.
+
+## 1879
+
+D_1879 <-
+  ks.test(light_1879, "pnorm", mean(light_1879), sd(light_1879))$statistic
+
+set.seed(2695303 + 46)
+
+D_1879BS <- numeric(B)
+for (i in 1:B) {
+  xstar_1879 = rnorm(length(light_1879))
+  D_1879BS[i] = Dn(xstar_1879)
+}
+
+p_1879= sum(D_1879BS>=D_1879)/B
+p_1879
+
+ks.test(light_1879, "pnorm", mean(light_1879), sd(light_1879))
+
+## 1882
+
+D_1882 <-
+  ks.test(light_1882, "pnorm", mean(light_1882), sd(light_1882))$statistic
+
+set.seed(2695303 + 46)
+
+D_1882BS <- numeric(B)
+for (i in 1:B) {
+  xstar_1882 = rnorm(length(light_1882))
+  D_1882BS[i] = Dn(xstar_1882)
+}
+
+p_1882=sum(D_1882BS>=D_1882)/B
+p_1882
+
+ks.test(light_1882, "pnorm", mean(light_1882), sd(light_1882))
+
