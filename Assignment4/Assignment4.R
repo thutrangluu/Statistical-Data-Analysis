@@ -80,19 +80,12 @@ quant_parBSd <-
                      probs = 0.1))
 mad_quant_pard <- mad(quant_parBSd)
 
-# Exercise 4.2 Read Examples 3.4 and 5.4 in the syllabus about data on β-thromboglobulin levels
-# which can be loaded by the R-code in thromboglobulin.txt2
-# . You can select e.g. the PRRP data using
-# R-command thromboglobulin$PRRP or thromboglobulin[[1]]. Or use attach(thromboglobulin)3
-# so that the variables PRRP, SDRP and CTRP are defined.
-
+# Exercise 4.2 
 source("thromboglobulin.txt")
 PRRP = thromboglobulin$PRRP
 SDRP = thromboglobulin$SDRP
 
-# a. Determine a two-sided
-# 90%-bootstrap confidence interval for the mean of the underlying distribution of PRRP.
-# Take B sufficiently large.
+# a. 
 
 PRRP_mean <- mean(PRRP)
 
@@ -116,9 +109,7 @@ c(
   PRRP_median - quantile(PRRP_zstar_b, 0.05)
 )
 
-# d. Determine a 90%-bootstrap confidence interval for the difference in mean between the two groups
-# SDRP and PRRP. What can you conclude from this interval about the difference in mean of the
-# two underlying distributions?
+# d.
 
 SDRP_mean = mean(SDRP)
 
@@ -140,9 +131,6 @@ hist(zstar_d, prob = T)
 abline(v = mean(zstar_d),
        col = "blue",
        lwd = 2)
-
-# 3 no standardize
-# ks is not really reliable
 
 # Exercise 4.3
 source("light.txt")
