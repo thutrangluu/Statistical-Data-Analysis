@@ -187,4 +187,3 @@ p_1882=sum(D_1882BS>=D_1882)/B
 p_1882
 
 ks.test(light_1882, "pnorm", mean(light_1882), sd(light_1882))
-
