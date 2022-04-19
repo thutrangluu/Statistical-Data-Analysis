@@ -1,25 +1,25 @@
 source ("functions_Ch3.txt")
 source ("functions_Ch5.txt")
 
-# Exercise 5.1 (.RData file hand-in) This exercise is about the grades for one of the resit
-# exams for a statistics course for the Computer Science students. The data can be found in the
-# file statgrades.txt. We assume that these data are a random sample that is representative
-# for the grades from resit exams in any other year the statistic course took place. Denote by
-# m the unknown median of the unknown true grades distribution.
+# Exercise 5.1
 
 statgrades <- scan("statgrades.txt")
 
-# a. Test H0 : m ≥6.2 against Ha: m < 6.2 at level α = 1%.
+# a.
 
 m = median(statgrades)
 
-par(mfrow = c(2, 2))
+par(mfrow = c(2, 2), pty = 's')
 hist(statgrades)
 symplot(statgrades)
 qqnorm(statgrades)
-qqline(statgrades, distribution = function(p)
-  qnorm(p), col="red")
-boxplot(statgrades)
+qqline(
+  statgrades,
+  distribution = function(p)
+    qnorm(p),
+  col = "red"
+)
+boxplot(statgrades, main = "Boxplot for statgrades")
 
 n51 <- length(statgrades)
 
@@ -45,7 +45,7 @@ pval_1a = binom.test(
 )$p.value
 reject_1a = pval_1a < alpha_1a
 
-# b. Test H0 : m = 6 against Ha: m 6= 6 at level α = 5%.
+# b.
 
 alpha_1b = 0.05
 
@@ -69,8 +69,7 @@ pval_1b = binom.test(
 )$p.value
 reject_1b = pval_1b < alpha_1b
 
-# c. Denote by p the probability to get a grade of at least 5.5.
-# Test H0 : p ≤45% against Ha: p > 45% at level α = 10% .
+# c.
 
 alpha_1c = 0.1
 
@@ -94,45 +93,39 @@ pval_1c = binom.test(
 )$p.value
 reject_1c = pval_1c < alpha_1c
 
-# Exercise 5.2 (partially .RData file hand-in) With cloud seeding a small airplane is
-# used to add a particular substance to clouds in order to change the precipitation properties2.
-# In a cloud seeding experiment in 1975, precipitation values of two groups of clouds, seeded
-# and unseeded, were compared. The precipitation data of this experiment are contained in the
-# file clouds.txt. In this exercise, we only focus on the data set unseeded.
-
+# Exercise 5.2
 clouds <- read.table("clouds.txt", header = T)
 unseeded_clouds <- clouds$unseeded.clouds
 
-# a. Investigate the data graphically and numerically.3
-
+# a.
 summary(unseeded_clouds)
+var(unseeded_clouds)
 
-par(mfrow = c(2, 2), pty = 's')
+par(mfrow = c(3, 2), pty = 's')
 hist(unseeded_clouds, prob = T)
 symplot(unseeded_clouds)
 qqnorm(unseeded_clouds)
-qqline(unseeded_clouds, distribution = function(p)
-  qnorm(p), col="red")
+qqline(
+  unseeded_clouds,
+  distribution = function(p)
+    qnorm(p),
+  col = "red"
+)
 qqexp(unseeded_clouds)
-qqline(unseeded_clouds, distribution = function(p)
-  qexp(p), col="red")
+qqline(
+  unseeded_clouds,
+  distribution = function(p)
+    qexp(p),
+  col = "red"
+)
+boxplot(unseeded_clouds, main = "Boxplot unseeded clouds")
 
-boxplot(unseeded_clouds)
 
-## the data was investigated numerically ang graphically.
-## The numerical summary is shown in the following table:
-
-## we explore the data graphically with the 4 graphs: histogram, symplot, qq plot and boxplot
-
-## from the graphical and numerical summaries, we can clearly see that the data is right skewed  
-
-# b. Determine the sample standard deviation of the data set; this is often used as a measure
-# for the accuracy of the measurements.
+# b.
 
 sd_sample <- sd(unseeded_clouds)
 
-# c. Determine a bootstrap estimate of the standard deviation of the estimator of accuracy
-# used in part b.4
+# c.
 
 B = 2000
 
@@ -151,8 +144,7 @@ sd_parBS <-
 
 sd_b_parBS <- sd(sd_parBS)
 
-# d. Repeat parts b and c, but now use as a measure for the accuracy of the measurements
-# the MAD which is a more robust estimator for spread.4
+# d.
 
 mad_sample <- mad(unseeded_clouds)
 
@@ -171,25 +163,19 @@ mad_parBS <-
 
 sd_d_parBS <- sd(mad_parBS)
 
-# e. Which estimator for the accuracy do you prefer for these data, the sample standard
-# deviation or the MAD? Explain how you reached your conclusion.
+# e.
 
-# mad bc smaller sd and mad is not effected by outliers
+sd_zstar = sd_empBS - sd_sample
 
-################## confidence intervals? bs ci
+c(sd_sample - quantile(sd_zstar, 0.975),
+  sd_sample - quantile(sd_zstar, 0.025))
 
-# f. Which test do you prefer for testing the location of the precipitation values of the
-# unseeded clouds: the t-test, the sign test, or the signed rank test? Motivate your
-# answer.
+mad_zstar = mad_empBS - mad_sample
 
-# use sign test because it required weaker assumption about the underlying distribution
-# t-test assume normality while signed rank test assume symmetry. But clearly from (a)
-# the distribution is neither normal nor symmetric.
+c(mad_sample - quantile(mad_zstar, 0.975),
+  mad_sample - quantile(mad_zstar, 0.025))
 
-# g. Test whether the location of the precipitation value of the unseeded clouds is less than
-# 40 by using the test your preferred in part f. Take the significance level α = 0.05.
-
-# test median < 40
+# g.
 
 alpha_2g = 0.05
 
@@ -204,10 +190,7 @@ binom.test(
   p = 0.5
 )
 
-# h. Make two-sided 95% confidence intervals for the location of the precipitation value of
-# unseeded clouds based on the sign test, the signed rank test, and the t-test.
-# Note: Warning messages from the wilcox.test command may be ignored.
-
+# h.
 median(unseeded_clouds)
 
 t.test(
@@ -247,56 +230,46 @@ sort(unseeded_clouds)
 #m<87
 #m>26.1
 
-# conditional tests???
-
-1-pbinom(18-1,length(unseeded_clouds)-1,0.5)
-1-pbinom(10-1,length(unseeded_clouds)-1,0.5)
+1 - pbinom(18 - 1, length(unseeded_clouds) - 1, 0.5)
+1 - pbinom(10 - 1, length(unseeded_clouds) - 1, 0.5)
 
 #(26.1,87]
 
-# i. Which confidence interval from h. do you value most, and why?
-
-# from sign test, bc is the smallest
-
-
-# Exercise 5.3 In 1882 S. Newcomb performed a series of experiments to determine the speed
-# of light with the method of Foucault. Light bounced from a fast rotating mirror in Fort Meyer
-# on the west bank of the Potomac in Washington to a fixed mirror at the foot of Washington
-# monument, and back to the rotating mirror. The speed of the light was calculated from the
-# measured distance between the mirrors (3721 meter) and the deflection angle of the emitted
-# and received light on the rotating mirror. The file newcomb.txt contains Newcomb’s data;
-# the given values times 10−3 plus 24.8 are the original observations of the time (in sec−6) the
-# light needed for traveling twice the 3721 meters.
+# Exercise 5
 
 newcomb <- scan("newcomb.txt")
 hist(newcomb)
 
-# a. Investigate whether there is a difference between the first 20 and the last 46 observations.
-# Do this by making suitable graphical summaries, by determining an estimate of the
-# difference, and by performing one or more suitable tests at level α = 5%.
+# a.
 
-par(mfrow = c(2,2))
-p = seq(0,1,0.1)
+par(mfrow = c(3, 2), pty = 's')
+p = seq(0, 1, 0.1)
 
 first <- newcomb[1:20]
 last <- newcomb[21:66]
 
-hist(first, prob=T)
-hist(last,prob=T)
-boxplot(first)
-boxplot(last)
+hist(first, prob = T)
+hist(last, prob = T)
+boxplot(first, last, main = "Boxplot for first 20 and last 46 obs")
+boxplot(first, last, main = "Boxplot for first 20 and last 46 obs", ylim = c(10, max(newcomb)))
+
 
 qqnorm(first)
-qqline(first,  distribution = function(p)
-  qnorm(p), col="red")
+qqline(
+  first,
+  distribution = function(p)
+    qnorm(p),
+  col = "red"
+)
 qqnorm(last)
-qqline(last,  distribution = function(p)
-  qnorm(p), col="red")
+qqline(
+  last,
+  distribution = function(p)
+    qnorm(p),
+  col = "red"
+)
 
-# Explanation: 1. The graphical summaries should visualize the datasets and make them
-# comparable. Possibly choose the same scales for the axes.
-# 2. Choose a suitable estimator and a suitable test. Motivate your choice in one or two
-# sentences.
+#tests
 
 mean(first)
 mean(last)
@@ -304,26 +277,34 @@ mean(last)
 median(first)
 median(last)
 
-# 2 sample ks test for difference shape 
-ks.test(first,last,alternative="greater")
+# 2 sample ks test for difference shape
+ks.test(first, last, alternative = "greater")
 
 # 2 sample wilcoxon test for discovering difference in location
 
-wilcox.test(first,last, alternative = "less")
+wilcox.test(first, last, alternative = "less")
 
-# b. Determine a 95% confidence interval for the traveling time of the light in Newcomb’s
-# experiment. According to present day physics the true value of the traveling time is
-# equal to 24.8332 (in sec−6). Is this value in the computed confidence interval? What
-# is your conclusion? Explanation: choose a suitable location estimator. Motivate your
-# choice in one or two sentences.
-# Note: to compare the given true travling time to the confidence intervals based on the
-# data, you should subtract 24.8 from the true time and then multiply the result with 1000.
-# Hand in: relevant plots and numbers and your answers to the questions
+# b.
+par(mfrow = c(1, 1))
+hist(newcomb, probability = T)
+
+newcomb_median <- median(newcomb)
+
+set.seed(2695303 + 46)
+newcomb_median_BS <- bootstrap(newcomb, statistic = median, B = B)
+newcomb_zstar = newcomb_median_BS - newcomb_median
+
+CI <- c(
+  newcomb_median - quantile(newcomb_zstar, 0.975),
+  newcomb_median - quantile(newcomb_zstar, 0.025)
+)
+CI
+
+CI[1] <= (24.8332 - 24.8) * 1000 && (24.8332 - 24.8) * 1000 <= CI[2]
 
 
-
-
-mylist <- list(stud_no = c(2695303),
+mylist <- list(
+  stud_no = c(2695303),
   "1_a_pval" = pval_1a,
   "1_a_reject" = reject_1a,
   "1_b_pval" = pval_1b,
@@ -332,7 +313,7 @@ mylist <- list(stud_no = c(2695303),
   "1_c_reject" = reject_1c,
   "2_b_sd" = sd_sample,
   "2_d_mad" = mad_sample,
-  "2_h_CI_sign" = c(26.1,87),
+  "2_h_CI_sign" = c(26.1, 87),
   "2_h_CI_wilcox" = c(36.69997, 187.24999),
   "2_h_CI_t" = c(52.09509, 277.02876)
 )
