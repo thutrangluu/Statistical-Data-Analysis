@@ -235,7 +235,7 @@ sort(unseeded_clouds)
 
 #(26.1,87]
 
-# Exercise 5
+# Exercise 5.3
 
 newcomb <- scan("newcomb.txt")
 hist(newcomb)
